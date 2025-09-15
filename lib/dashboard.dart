@@ -7,8 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'app_loader.dart';
 import 'ordershistory.dart';
-import 'app_colors.dart';
-import 'dart:io'; // Needed for SocketException
+import 'core/utils/constants/app_colors.dart';
+import 'core/utils/size_utils.dart';
+import 'dart:io';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -45,7 +46,6 @@ class _DashboardPageState extends State<DashboardPage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _initializeApp();
-    // Auto-refresh every 5 seconds for real-time updates
     _startAutoRefresh();
   }
 
@@ -139,8 +139,7 @@ class _DashboardPageState extends State<DashboardPage>
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      String? sessionId = prefs.getString("session_id");
-      if (sessionId == null) throw Exception("User not logged in");
+      String sessionId = prefs.getString("session_id") ?? '';
 
       final response = await http.get(
         Uri.parse("https://app.zicbot.com/api/get_orders.php"),
@@ -188,7 +187,6 @@ class _DashboardPageState extends State<DashboardPage>
             }
           }
         }
-
         if (mounted) {
           setState(() {
             completedOrders = todayCompleted;
@@ -278,7 +276,6 @@ class _DashboardPageState extends State<DashboardPage>
         payload: 'order_${order["id"]}',
       );
 
-      // Show in-app notification banner
       if (mounted) {
         _showInAppNotification(order);
       }
@@ -291,18 +288,18 @@ class _DashboardPageState extends State<DashboardPage>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.h),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.fSize),
           ),
           child: Row(
             children: [
-              const Icon(Icons.notifications_active,
-                  color: Colors.white, size: 24),
-              const SizedBox(width: 12),
+              Icon(Icons.notifications_active,
+                  color: Colors.white, size: 24.fSize),
+              Gap.h(12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,16 +333,12 @@ class _DashboardPageState extends State<DashboardPage>
     try {
       final prefs = await SharedPreferences.getInstance();
       String? sessionId = prefs.getString("session_id");
-      if (sessionId == null) {
-        Fluttertoast.showToast(msg: "Not logged in");
-        return false;
-      }
 
       final resp = await http.post(
         Uri.parse("https://app.zicbot.com/api/update_order.php"),
         headers: {
           "Content-Type": "application/json",
-          "Cookie": sessionId,
+          "Cookie": sessionId ?? '',
           "Accept": "application/json"
         },
         body: json.encode(payload),
@@ -388,13 +381,13 @@ class _DashboardPageState extends State<DashboardPage>
           children: [
             // ✅ Summary Cards - fixed overflow
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.h),
               child: GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
+                crossAxisSpacing: 15.h,
+                mainAxisSpacing: 15.v,
                 childAspectRatio: 2.0, // slightly taller → no cut text
                 children: [
                   _buildSummaryCard(
@@ -428,7 +421,7 @@ class _DashboardPageState extends State<DashboardPage>
             // ✅ Order History Button
             Container(
               width: double.infinity, // 👈 takes full width
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              margin: EdgeInsets.symmetric(horizontal: 12.h, vertical: 4.v),
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -437,13 +430,14 @@ class _DashboardPageState extends State<DashboardPage>
                     borderRadius: BorderRadius.circular(10),
                   ),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.v),
                 ),
-                icon: const Icon(Icons.history,
-                    size: 18, color: Color(0xFF9C27B0)),
-                label: const Text(
+                icon: Icon(Icons.history,
+                    size: 18.fSize, color: const Color(0xFF9C27B0)),
+                label: Text(
                   "View Order History",
-                  style: TextStyle(color: Color(0xFF9C27B0), fontSize: 14),
+                  style:
+                      TextStyle(color: Color(0xFF9C27B0), fontSize: 14.fSize),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -458,10 +452,11 @@ class _DashboardPageState extends State<DashboardPage>
 
             // ✅ Tabs (separate line, square style)
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: EdgeInsets.symmetric(horizontal: 16.h),
               decoration: BoxDecoration(
                 color: const Color(0xFF1A1A1A),
-                borderRadius: BorderRadius.circular(4), // less rounded = square
+                borderRadius:
+                    BorderRadius.circular(4.fSize), // less rounded = square
               ),
               child: TabBar(
                 controller: _tabController,
@@ -469,7 +464,8 @@ class _DashboardPageState extends State<DashboardPage>
                 unselectedLabelColor: Colors.white54,
                 indicator: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4), // square indicator
+                  borderRadius:
+                      BorderRadius.circular(4.fSize), // square indicator
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 tabs: [
@@ -477,11 +473,11 @@ class _DashboardPageState extends State<DashboardPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.pending_actions, size: 16),
-                        const SizedBox(width: 6),
+                        Icon(Icons.pending_actions, size: 16.fSize),
+                        Gap.h(6),
                         Text(
                           'Pending (${pendingOrders.length})',
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12.fSize),
                         ),
                       ],
                     ),
@@ -490,11 +486,11 @@ class _DashboardPageState extends State<DashboardPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.check_circle, size: 16),
-                        const SizedBox(width: 6),
+                        Icon(Icons.check_circle, size: 16.fSize),
+                        Gap.h(6),
                         Text(
                           'Completed (${completedOrders.length})',
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12.fSize),
                         ),
                       ],
                     ),
@@ -527,26 +523,26 @@ class _DashboardPageState extends State<DashboardPage>
           children: [
             Icon(
               isCurrentOrders ? Icons.pending_actions : Icons.check_circle,
-              size: 64,
+              size: 64.fSize,
               color: Colors.white24,
             ),
-            const SizedBox(height: 16),
+            Gap.v(16),
             Text(
               isCurrentOrders ? 'No current orders' : 'No completed orders',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white70,
-                fontSize: 18,
+                fontSize: 18.fSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            Gap.v(8),
             Text(
               isCurrentOrders
                   ? 'New orders will appear here automatically'
                   : 'Completed orders will appear here',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white38,
-                fontSize: 14,
+                fontSize: 14.fSize,
               ),
             ),
           ],
@@ -555,7 +551,7 @@ class _DashboardPageState extends State<DashboardPage>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.h),
       itemCount: orders.length,
       itemBuilder: (context, index) =>
           _buildOrderCard(orders[index], isCurrentOrders),
@@ -574,26 +570,27 @@ class _DashboardPageState extends State<DashboardPage>
             Color(0xFF2A2A2A),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.fSize),
         border: Border.all(
           color: color.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16), // Reduced padding
+        padding: EdgeInsets.all(16.h), // Reduced padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(6), // Reduced padding
+                  padding: EdgeInsets.all(6.h), // Reduced padding
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.fSize),
                   ),
-                  child: Icon(icon, color: color, size: 18), // Reduced size
+                  child:
+                      Icon(icon, color: color, size: 18.fSize), // Reduced size
                 ),
                 const Spacer(),
                 Flexible(
@@ -601,7 +598,7 @@ class _DashboardPageState extends State<DashboardPage>
                     value,
                     style: TextStyle(
                       color: color,
-                      fontSize: 20, // Reduced font size
+                      fontSize: 20.fSize, // Reduced font size
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -609,13 +606,13 @@ class _DashboardPageState extends State<DashboardPage>
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            Gap.v(8),
             Flexible(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 12, // Reduced font size
+                  fontSize: 12.fSize, // Reduced font size
                   fontWeight: FontWeight.w500,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -633,7 +630,7 @@ class _DashboardPageState extends State<DashboardPage>
     final statusColor = _getStatusColor(status);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12.v),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -643,7 +640,7 @@ class _DashboardPageState extends State<DashboardPage>
             Color(0xFF2A2A2A),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.fSize),
         border: Border.all(
           color: isActive
               ? AppColors.primary.withOpacity(0.3)
@@ -652,7 +649,7 @@ class _DashboardPageState extends State<DashboardPage>
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -665,18 +662,18 @@ class _DashboardPageState extends State<DashboardPage>
                     children: [
                       Text(
                         order["name"] ?? "Unknown Customer",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 18.fSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      Gap.v(4),
                       Text(
                         "Order #${order["id"]}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white60,
-                          fontSize: 14,
+                          fontSize: 14.fSize,
                         ),
                       ),
                     ],
@@ -684,17 +681,17 @@ class _DashboardPageState extends State<DashboardPage>
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      EdgeInsets.symmetric(horizontal: 12.h, vertical: 6.v),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.fSize),
                     border: Border.all(color: statusColor.withOpacity(0.5)),
                   ),
                   child: Text(
                     status,
                     style: TextStyle(
                       color: statusColor,
-                      fontSize: 12,
+                      fontSize: 12.fSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -702,7 +699,7 @@ class _DashboardPageState extends State<DashboardPage>
               ],
             ),
 
-            const SizedBox(height: 16),
+            Gap.v(16),
 
             // Order Details
             _buildDetailRow(Icons.restaurant_menu, "Details",
@@ -715,21 +712,21 @@ class _DashboardPageState extends State<DashboardPage>
             _buildDetailRow(
                 Icons.access_time, "Time", order["created_at"] ?? "-"),
 
-            const SizedBox(height: 16),
+            Gap.v(16),
 
             // Action Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () => showOrderForm(order),
-                icon: const Icon(Icons.edit, size: 18),
+                icon: Icon(Icons.edit, size: 18.fSize),
                 label: const Text("View & Edit Order"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 12.v),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.fSize),
                   ),
                   elevation: 0,
                 ),
@@ -743,29 +740,29 @@ class _DashboardPageState extends State<DashboardPage>
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8.v),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white60, size: 16),
-          const SizedBox(width: 8),
+          Icon(icon, color: Colors.white60, size: 16.fSize),
+          Gap.h(8),
           SizedBox(
-            width: 60,
+            width: 60.h,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white60,
-                fontSize: 14,
+                fontSize: 14.fSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          Gap.h(8),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: 14.fSize,
               ),
             ),
           ),
@@ -815,7 +812,7 @@ class _DashboardPageState extends State<DashboardPage>
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -824,7 +821,7 @@ class _DashboardPageState extends State<DashboardPage>
                 Color(0xFF1E1E1E),
               ],
             ),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.fSize)),
           ),
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -833,7 +830,7 @@ class _DashboardPageState extends State<DashboardPage>
             builder: (context, setModalState) {
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -841,35 +838,35 @@ class _DashboardPageState extends State<DashboardPage>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(12.h),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.fSize),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.edit,
                               color: AppColors.primary,
-                              size: 24,
+                              size: 24.fSize,
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          Gap.h(16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   "Edit Order",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 20,
+                                    fontSize: 20.fSize,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
                                   "Order #${order["id"]}",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.primary,
-                                    fontSize: 14,
+                                    fontSize: 14.fSize,
                                   ),
                                 ),
                               ],
@@ -883,7 +880,7 @@ class _DashboardPageState extends State<DashboardPage>
                         ],
                       ),
 
-                      const SizedBox(height: 24),
+                      Gap.v(24),
 
                       // Form Fields
                       buildTextField(
@@ -931,12 +928,12 @@ class _DashboardPageState extends State<DashboardPage>
                             () => paymentStatus = val ?? "Unpaid"),
                       ),
 
-                      const SizedBox(height: 32),
+                      Gap.v(32),
 
                       // Save Button
                       SizedBox(
                         width: double.infinity,
-                        height: 56,
+                        height: 56.v,
                         child: ElevatedButton(
                           onPressed: _isSavingOrder
                               ? null
@@ -965,23 +962,23 @@ class _DashboardPageState extends State<DashboardPage>
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(16.fSize),
                             ),
                             elevation: 0,
                           ),
                           child: _isSavingOrder
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
+                              ? SizedBox(
+                                  height: 20.fSize,
+                                  width: 20.fSize,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.0,
                                     color: Colors.white,
                                   ),
                                 )
-                              : const Text(
+                              : Text(
                                   "Save Changes",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16.fSize,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -1002,23 +999,23 @@ class _DashboardPageState extends State<DashboardPage>
       String label, TextEditingController controller, IconData icon,
       {int maxLines = 1}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: 20.v),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: 14.fSize,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          Gap.v(8),
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFF2A2A2A),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.fSize),
               border: Border.all(color: Colors.white12),
             ),
             child: TextField(
@@ -1026,9 +1023,9 @@ class _DashboardPageState extends State<DashboardPage>
               maxLines: maxLines,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: Colors.white60, size: 20),
+                prefixIcon: Icon(icon, color: Colors.white60, size: 20.fSize),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(16),
+                contentPadding: EdgeInsets.all(16.h),
                 hintText: "Enter $label",
                 hintStyle: const TextStyle(color: Colors.white38),
               ),
@@ -1042,30 +1039,30 @@ class _DashboardPageState extends State<DashboardPage>
   Widget buildDropdown(String label, String value, List<String> items,
       IconData icon, Function(String?) onChange) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: 20.v),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: 14.fSize,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          Gap.v(8),
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFF2A2A2A),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.fSize),
               border: Border.all(color: Colors.white12),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.h),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white60, size: 20),
-                const SizedBox(width: 12),
+                Icon(icon, color: Colors.white60, size: 20.fSize),
+                Gap.h(12),
                 Expanded(
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(

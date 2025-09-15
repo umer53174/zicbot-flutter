@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'app_colors.dart';
+import 'core/utils/constants/app_colors.dart';
+import 'core/utils/size_utils.dart';
 import 'app_loader.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -53,17 +54,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       final prefs = await SharedPreferences.getInstance();
       String? sessionId = prefs.getString("session_id");
 
-      if (sessionId == null) {
-        setState(() {
-          errorMessage = 'User not logged in';
-          isLoading = false;
-        });
-        return;
-      }
-
       final response = await http.get(
         Uri.parse("https://app.zicbot.com/api/get_orders.php"),
-        headers: {"Cookie": sessionId, "Accept": "application/json"},
+        headers: {"Cookie": sessionId ?? '', "Accept": "application/json"},
       );
 
       if (response.statusCode == 200) {
@@ -168,44 +161,44 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             Color(0xFF2A2A2A),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.fSize),
         border: Border.all(
           color: color.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.h),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.fSize),
                   ),
-                  child: Icon(icon, color: color, size: 20),
+                  child: Icon(icon, color: color, size: 20.fSize),
                 ),
                 const Spacer(),
                 Text(
                   count.toString(),
                   style: TextStyle(
                     color: color,
-                    fontSize: 24,
+                    fontSize: 24.fSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            Gap.v(12),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white70,
-                fontSize: 14,
+                fontSize: 14.fSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -217,8 +210,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
 
   Widget buildFilterSection() {
     return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(20.h),
+      margin: EdgeInsets.all(16.h),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -228,7 +221,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             Color(0xFF2A2A2A),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.fSize),
         border: Border.all(
           color: AppColors.primary.withOpacity(0.3),
           width: 1,
@@ -240,19 +233,19 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8.fSize),
                 ),
-                child: const Icon(Icons.filter_list,
-                    color: AppColors.primary, size: 20),
+                child: Icon(Icons.filter_list,
+                    color: AppColors.primary, size: 20.fSize),
               ),
-              const SizedBox(width: 12),
-              const Text(
+              Gap.h(12),
+              Text(
                 'Filters',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 18.fSize,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -267,7 +260,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          Gap.v(20),
 
           // Date Filter
           GestureDetector(
@@ -297,21 +290,21 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               }
             },
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.h),
               decoration: BoxDecoration(
                 color: const Color(0xFF2A2A2A),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.fSize),
                 border: Border.all(color: Colors.white12),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.calendar_today, color: AppColors.primary),
-                  const SizedBox(width: 12),
+                  Gap.h(12),
                   Text(
                     selectedDate != null
                         ? DateFormat('MMM dd, yyyy').format(selectedDate!)
                         : 'Select Date',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(color: Colors.white, fontSize: 16.fSize),
                   ),
                   const Spacer(),
                   if (selectedDate != null)
@@ -322,15 +315,15 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         });
                         applyFilters();
                       },
-                      child: const Icon(Icons.clear,
-                          color: Colors.white60, size: 20),
+                      child: Icon(Icons.clear,
+                          color: Colors.white60, size: 20.fSize),
                     ),
                 ],
               ),
             ),
           ),
 
-          const SizedBox(height: 16),
+          Gap.v(16),
 
           Row(
             children: [
@@ -350,7 +343,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 ),
               ),
 
-              const SizedBox(width: 16),
+              Gap.h(16),
 
               // Order Status Filter
               Expanded(
@@ -386,31 +379,31 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white70,
-            fontSize: 12,
+            fontSize: 12.fSize,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8),
+        Gap.v(8),
         Container(
           decoration: BoxDecoration(
             color: const Color(0xFF2A2A2A),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.fSize),
             border: Border.all(color: Colors.white12),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
           child: Row(
             children: [
-              Icon(icon, color: Colors.white60, size: 18),
-              const SizedBox(width: 8),
+              Icon(icon, color: Colors.white60, size: 18.fSize),
+              Gap.h(8),
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: value,
                     dropdownColor: const Color(0xFF2A2A2A),
                     isExpanded: true,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14.fSize),
                     items: items.map((item) {
                       return DropdownMenuItem(
                         value: item,
@@ -431,8 +424,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   Widget buildOrdersTable() {
     if (filteredOrders.isEmpty) {
       return Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.all(40),
+        margin: EdgeInsets.all(16.h),
+        padding: EdgeInsets.all(40.h),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -442,25 +435,25 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               Color(0xFF2A2A2A),
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.fSize),
           border: Border.all(
             color: Colors.white12,
             width: 1,
           ),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             children: [
-              Icon(Icons.inbox, size: 64, color: Colors.white24),
-              SizedBox(height: 16),
+              Icon(Icons.inbox, size: 64.fSize, color: Colors.white24),
+              Gap.v(16),
               Text(
                 'No orders found',
-                style: TextStyle(fontSize: 18, color: Colors.white70),
+                style: TextStyle(fontSize: 18.fSize, color: Colors.white70),
               ),
-              SizedBox(height: 8),
+              Gap.v(8),
               Text(
                 'Try adjusting your filters',
-                style: TextStyle(fontSize: 14, color: Colors.white38),
+                style: TextStyle(fontSize: 14.fSize, color: Colors.white38),
               ),
             ],
           ),
@@ -469,7 +462,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     }
 
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(16.h),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -479,7 +472,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             Color(0xFF2A2A2A),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.fSize),
         border: Border.all(
           color: AppColors.primary.withOpacity(0.3),
           width: 1,
@@ -489,23 +482,23 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.h),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.h),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.fSize),
                   ),
-                  child: const Icon(Icons.receipt_long,
-                      color: AppColors.primary, size: 20),
+                  child: Icon(Icons.receipt_long,
+                      color: AppColors.primary, size: 20.fSize),
                 ),
-                const SizedBox(width: 12),
+                Gap.h(12),
                 Text(
                   'Orders (${filteredOrders.length})',
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 18.fSize,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -516,7 +509,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
 
           // Table Header (for mobile)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.v),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.3),
               border: const Border(
@@ -524,7 +517,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 bottom: BorderSide(color: Colors.white12),
               ),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Expanded(
                     flex: 2,
@@ -532,21 +525,21 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         style: TextStyle(
                             color: Colors.white70,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12))),
+                            fontSize: 12.fSize))),
                 Expanded(
                     flex: 1,
                     child: Text('Type',
                         style: TextStyle(
                             color: Colors.white70,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12))),
+                            fontSize: 12.fSize))),
                 Expanded(
                     flex: 1,
                     child: Text('Status',
                         style: TextStyle(
                             color: Colors.white70,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12))),
+                            fontSize: 12.fSize))),
               ],
             ),
           ),
@@ -581,7 +574,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               final statusColor = _getStatusColor(status);
 
               return Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -594,29 +587,29 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                             children: [
                               Text(
                                 '#${order['id']} - ${order['name'] ?? 'Unknown Customer'}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 16.fSize,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              Gap.v(4),
                               Text(
                                 formattedDate,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white60,
-                                  fontSize: 12,
+                                  fontSize: 12.fSize,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.h, vertical: 4.v),
                           decoration: BoxDecoration(
                             color: statusColor.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.fSize),
                             border:
                                 Border.all(color: statusColor.withOpacity(0.5)),
                           ),
@@ -624,7 +617,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                             status,
                             style: TextStyle(
                               color: statusColor,
-                              fontSize: 11,
+                              fontSize: 11.fSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -632,7 +625,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       ],
                     ),
 
-                    const SizedBox(height: 12),
+                    Gap.v(12),
 
                     // Order Details Row
                     Row(
@@ -644,8 +637,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                             children: [
                               Text(
                                 order['order_details'] ?? 'No details',
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 14),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14.fSize),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -653,11 +646,12 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                       ?.toString()
                                       .isNotEmpty ==
                                   true) ...[
-                                const SizedBox(height: 4),
+                                Gap.v(4),
                                 Text(
                                   'Table: ${order['table_number']}',
-                                  style: const TextStyle(
-                                      color: Colors.white60, fontSize: 12),
+                                  style: TextStyle(
+                                      color: Colors.white60,
+                                      fontSize: 12.fSize),
                                 ),
                               ],
                             ],
@@ -666,17 +660,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         Expanded(
                           flex: 1,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 3),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 6.h, vertical: 3.v),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8.fSize),
                             ),
                             child: Text(
                               order['order_type'] ?? 'N/A',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
-                                fontSize: 11,
+                                fontSize: 11.fSize,
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.center,
@@ -690,7 +684,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
               );
             },
           ),
-          const SizedBox(height: 16),
+          Gap.v(16),
         ],
       ),
     );
@@ -731,19 +725,19 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.error_outline,
-                        size: 64,
+                        size: 64.fSize,
                         color: Colors.red,
                       ),
-                      const SizedBox(height: 16),
+                      Gap.v(16),
                       Text(
                         errorMessage,
-                        style: const TextStyle(
-                            fontSize: 16, color: Colors.white70),
+                        style: TextStyle(
+                            fontSize: 16.fSize, color: Colors.white70),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
+                      Gap.v(16),
                       ElevatedButton(
                         onPressed: fetchOrders,
                         style: ElevatedButton.styleFrom(
@@ -765,13 +759,13 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                       children: [
                         // Stats Cards
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16.h),
                           child: GridView.count(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12.h,
+                            mainAxisSpacing: 12.v,
                             childAspectRatio: 1.5,
                             children: [
                               buildStatsCard(
@@ -796,7 +790,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         // Orders Table
                         buildOrdersTable(),
 
-                        const SizedBox(height: 20),
+                        Gap.v(20),
                       ],
                     ),
                   ),

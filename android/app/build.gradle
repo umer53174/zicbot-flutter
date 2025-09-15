@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.test_app"
+    namespace = "com.zicbot.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.test_app"
+        applicationId = "com.zicbot.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

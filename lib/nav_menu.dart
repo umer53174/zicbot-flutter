@@ -3,7 +3,7 @@ import 'dashboard.dart';
 import 'memberships_page.dart';
 import 'profile_page.dart';
 import 'credit-page.dart';
-import 'app_colors.dart';
+import 'core/utils/constants/app_colors.dart';
 
 class NavMenu extends StatefulWidget {
   const NavMenu({super.key});
@@ -27,6 +27,8 @@ class _NavMenuState extends State<NavMenu> {
     return Scaffold(
       appBar: AppBar(
         // Left-side icon that matches the tab
+
+        forceMaterialTransparency: true,
         leading: Icon(
           selectedIndex == 0
               ? Icons.dashboard

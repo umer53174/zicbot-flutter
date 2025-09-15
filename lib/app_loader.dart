@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../app_colors.dart'; // adjust import if needed
+import 'core/utils/constants/app_colors.dart'; // adjust import if needed
 
 class AppLoader extends StatelessWidget {
   final String message;

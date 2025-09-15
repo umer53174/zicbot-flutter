@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
 import 'app_loader.dart';
-import 'app_colors.dart';
+import 'core/utils/constants/app_colors.dart';
+import 'core/utils/size_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -73,8 +74,8 @@ class _ProfilePageState extends State<ProfilePage>
             content: const Text('Error loading user data'),
             backgroundColor: Colors.red[600],
             behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.fSize)),
           ),
         );
       }
@@ -94,14 +95,15 @@ class _ProfilePageState extends State<ProfilePage>
         content: Row(
           children: [
             const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 12),
+            Gap.h(12),
             Expanded(child: Text(message)),
           ],
         ),
         backgroundColor: Colors.red.shade700,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.fSize)),
+        margin: EdgeInsets.all(16.h),
       ),
     );
   }
@@ -113,27 +115,28 @@ class _ProfilePageState extends State<ProfilePage>
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey[900],
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.fSize)),
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.h),
               decoration: BoxDecoration(
                 color: Colors.red[100]?.withAlpha((0.2 * 255).round()),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.logout, color: Colors.red[400], size: 24),
+              child: Icon(Icons.logout, color: Colors.red[400], size: 24.fSize),
             ),
-            const SizedBox(width: 12),
-            const Text(
+            Gap.h(12),
+            Text(
               'Confirm Logout',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 20.fSize),
             ),
           ],
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to logout? You will need to sign in again.',
-          style: TextStyle(color: Colors.white70, fontSize: 16),
+          style: TextStyle(color: Colors.white70, fontSize: 16.fSize),
         ),
         actions: [
           TextButton(
@@ -191,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage>
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+          padding: EdgeInsets.fromLTRB(24.h, 60.v, 24.h, 24.v),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -206,26 +209,26 @@ class _ProfilePageState extends State<ProfilePage>
   Widget _buildAccountInfoCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.h),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.fSize),
         border: Border.all(color: Colors.grey.withAlpha((0.1 * 255).round())),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 🔹 Account Info Heading
-          const Text(
+          Text(
             'Account Information',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 20.fSize,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 24),
+          Gap.v(24),
 
           // Email
           if (email.isNotEmpty) ...[
@@ -235,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage>
               value: email,
               valueColor: Colors.white,
             ),
-            const SizedBox(height: 16),
+            Gap.v(16),
           ],
           // Restaurant Name
           if (restaurantName.isNotEmpty) ...[
@@ -245,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage>
               value: restaurantName,
               valueColor: Colors.white,
             ),
-            const SizedBox(height: 16),
+            Gap.v(16),
           ],
 
           // Member Plan
@@ -255,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage>
             value: planName.isEmpty ? 'Free' : planName,
             valueColor: const Color(0xFF6C63FF),
           ),
-          const SizedBox(height: 16),
+          Gap.v(16),
 
           // Account Status
           _buildInfoTile(
@@ -266,7 +269,7 @@ class _ProfilePageState extends State<ProfilePage>
                 planActive ? const Color(0xFF00C851) : const Color(0xFFFF8A00),
             showBadge: true,
           ),
-          const SizedBox(height: 20),
+          Gap.v(20),
           Center(
             child: ElevatedButton.icon(
               onPressed: _Profilepage,
@@ -274,37 +277,36 @@ class _ProfilePageState extends State<ProfilePage>
                 Icons.person, // Profile icon
                 color: Colors.white,
               ),
-              label: const Text(
+              label: Text(
                 "Update Profile",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(fontSize: 16.fSize, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 16.v),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.fSize),
                 ),
                 elevation: 4,
               ),
             ),
           ),
           // 🔹 Logout Button (Outlined like Order History)
-          const SizedBox(height: 25),
+          Gap.v(25),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.purple,
               side: const BorderSide(color: Colors.purple, width: 2.5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.fSize),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 12.v),
               backgroundColor: Colors.transparent,
             ),
-            icon: const Icon(Icons.logout, size: 20, color: Colors.white),
-            label: const Text(
+            icon: Icon(Icons.logout, size: 20.fSize, color: Colors.white),
+            label: Text(
               "Logout",
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: TextStyle(color: Colors.white, fontSize: 14.fSize),
             ),
             onPressed: _logout,
           ),
@@ -321,54 +323,54 @@ class _ProfilePageState extends State<ProfilePage>
     bool showBadge = false,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.h),
       decoration: BoxDecoration(
         color: Colors.grey[900]?.withAlpha((0.5 * 255).round()),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.fSize),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.h),
             decoration: BoxDecoration(
               color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.fSize),
             ),
-            child: Icon(icon, color: Colors.white70, size: 20),
+            child: Icon(icon, color: Colors.white70, size: 20.fSize),
           ),
-          const SizedBox(width: 16),
+          Gap.h(16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: const TextStyle(
-                        fontSize: 14,
+                    style: TextStyle(
+                        fontSize: 14.fSize,
                         color: Colors.white70,
                         fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
+                Gap.v(4),
                 Row(
                   children: [
                     Flexible(
                       child: Text(value,
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.fSize,
                               fontWeight: FontWeight.w600,
                               color: valueColor)),
                     ),
                     if (showBadge) ...[
-                      const SizedBox(width: 8),
+                      Gap.h(8),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.h, vertical: 2.v),
                         decoration: BoxDecoration(
                           color: valueColor.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.fSize),
                         ),
                         child: Text(
                           planActive ? 'ACTIVE' : 'INACTIVE',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 10.fSize,
                             fontWeight: FontWeight.bold,
                             color: valueColor,
                           ),

@@ -3,7 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'app_colors.dart';
+import 'core/utils/constants/app_colors.dart';
+import 'core/utils/size_utils.dart';
 import 'app_loader.dart';
 import 'dart:async';
 
@@ -64,52 +65,6 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
     super.dispose();
   }
 
-  // Future<void> _loadCredits() async {
-  //   try {
-  //     // ✅ Check if widget is still mounted before setting state
-  //     if (!mounted) return;
-
-  //     setState(() {
-  //       isLoading = true;
-  //       hasError = false;
-  //     });
-
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final userId = prefs.getString("userId");
-
-  //     if (userId == null) {
-  //       throw Exception('User not logged in');
-  //     }
-
-  //     final response = await http.get(
-  //       Uri.parse('https://app.zicbot.com/api/credits.php?user_id=$userId'),
-  //       headers: {'Content-Type': 'application/json'},
-  //     ).timeout(const Duration(seconds: 10));
-
-  //     // ✅ Check if widget is still mounted before setting state
-  //     if (!mounted) return;
-
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-  //       setState(() {
-  //         creditsData = data;
-  //         isLoading = false;
-  //       });
-  //       _fadeController.forward();
-  //       _slideController.forward();
-  //     } else {
-  //       throw Exception('Failed to load credits: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     if (!mounted) return;
-
-  //     setState(() {
-  //       isLoading = false;
-  //       hasError = true;
-  //       errorMessage = e.toString().replaceAll('Exception: ', '');
-  //     });
-  //   }
-  // }
   Future<void> _loadCredits() async {
     try {
       if (!mounted) return;
@@ -204,19 +159,19 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
           onRefresh: _loadCredits,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  height: 250,
+                  height: 250.v,
                   child: _buildPieChart(),
                 ),
-                const SizedBox(height: 25),
+                Gap.v(25),
                 _buildCreditsOverview(),
-                const SizedBox(height: 25),
+                Gap.v(25),
                 _buildDetailsCard(),
-                const SizedBox(height: 25),
+                Gap.v(25),
                 _buildUsageGuide(),
               ],
             ),
@@ -237,28 +192,28 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
         children: [
           Icon(
             Icons.error_outline,
-            size: 64,
+            size: 64.fSize,
             color: Colors.red[300],
           ),
-          const SizedBox(height: 16),
-          const Text(
+          Gap.v(16),
+          Text(
             'Failed to load credits',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.fSize,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 8),
+          Gap.v(8),
           Text(
             errorMessage,
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: 14.fSize,
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          Gap.v(24),
           ElevatedButton.icon(
             onPressed: _loadCredits,
             icon: const Icon(Icons.refresh),
@@ -266,9 +221,9 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.cardBackground,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 12.v),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(25.fSize),
               ),
             ),
           ),
@@ -282,9 +237,10 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
       color: AppColors.cardBackground,
       elevation: 8,
       shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.fSize)),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.h),
         child: Column(
           children: [
             Row(
@@ -310,7 +266,7 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Gap.v(16),
             LinearProgressIndicator(
               value: usagePercentage / 100,
               backgroundColor: Colors.grey[800],
@@ -321,15 +277,15 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
                         ? Colors.orange
                         : Colors.green,
               ),
-              borderRadius: BorderRadius.circular(10),
-              minHeight: 8,
+              borderRadius: BorderRadius.circular(10.fSize),
+              minHeight: 8.v,
             ),
-            const SizedBox(height: 8),
-            const SizedBox(height: 8),
+            Gap.v(8),
+            Gap.v(8),
             Text(
               "${usagePercentage.toStringAsFixed(1)}% used this period",
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: 14.fSize,
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
@@ -345,26 +301,26 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.h),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: color, size: 24),
+          child: Icon(icon, color: color, size: 24.fSize),
         ),
-        const SizedBox(height: 8),
+        Gap.v(8),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 20,
+          style: TextStyle(
+            fontSize: 20.fSize,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: 12.fSize,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
@@ -375,28 +331,28 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
 
   Widget _buildPieChart() {
     return SizedBox(
-      height: 250,
+      height: 250.v,
       child: Card(
         color: AppColors.cardBackground,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.fSize),
         ),
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.h),
           child: PieChart(
             PieChartData(
-              sectionsSpace: 4,
-              centerSpaceRadius: 50,
+              sectionsSpace: 4.fSize,
+              centerSpaceRadius: 50.fSize,
               sections: [
                 PieChartSectionData(
                   color: const Color.fromARGB(255, 107, 106, 106),
                   value: usedCredits.toDouble(),
                   title: "$usedCredits\nUsed",
-                  radius: 60,
-                  titleStyle: const TextStyle(
+                  radius: 60.fSize,
+                  titleStyle: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 14.fSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -404,10 +360,10 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
                   color: AppColors.primary,
                   value: remainingCredits.toDouble(),
                   title: "$remainingCredits\nLeft",
-                  radius: 60,
-                  titleStyle: const TextStyle(
+                  radius: 60.fSize,
+                  titleStyle: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 14.fSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -424,21 +380,22 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
       color: AppColors.cardBackground,
       elevation: 8,
       shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.fSize)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Credit Details",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.fSize,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 16),
+            Gap.v(16),
             _buildDetailRow("Total Credits", "$totalCredits credits",
                 Icons.credit_card, Colors.blue),
             _buildDetailRow("Used Credits", "$usedCredits credits",
@@ -458,28 +415,28 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
   Widget _buildDetailRow(
       String label, String value, IconData icon, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8.v),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.h),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.fSize),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 20.fSize),
           ),
-          const SizedBox(width: 12),
+          Gap.h(12),
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(fontSize: 16, color: Colors.white),
+              style: TextStyle(fontSize: 16.fSize, color: Colors.white),
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: 16.fSize,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -494,21 +451,22 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
       color: AppColors.cardBackground,
       elevation: 8,
       shadowColor: Colors.black26,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: const Padding(
-        padding: EdgeInsets.all(20),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.fSize)),
+      child: Padding(
+        padding: EdgeInsets.all(20.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "How Credits Work",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.fSize,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 16),
+            Gap.v(16),
             Text(
               "What are message credits?\n\n"
               "Message credits are used when your system processes messages. "
@@ -519,8 +477,8 @@ class _MessageCreditsScreenState extends State<MessageCreditsScreen>
               "Your credits reset on a rolling period (default 30 days) "
               "based on your membership plan. "
               "Unused credits do not carry over.",
-              style:
-                  TextStyle(fontSize: 15, height: 1.5, color: Colors.white70),
+              style: TextStyle(
+                  fontSize: 15.fSize, height: 1.5, color: Colors.white70),
             ),
           ],
         ),
