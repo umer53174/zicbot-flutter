@@ -1,8 +1,13 @@
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
+
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.zicbot.app"
@@ -28,9 +33,18 @@ android {
         versionName = flutter.versionName
     }
 
+signingConfigs {
+    release {
+        keyAlias keystoreProperties['keyAlias']
+        keyPassword keystoreProperties['keyPassword']
+        storeFile file(keystoreProperties['storeFile'])
+        storePassword keystoreProperties['storePassword']
+    }
+}
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
 
             // Add these lines for release mode optimization
             minifyEnabled true
