@@ -139,8 +139,10 @@ class _DashboardPageState extends State<DashboardPage>
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      String sessionId = prefs.getString("session_id") ?? '';
-
+      String? sessionId = prefs.getString("session_id");
+      if (sessionId == null || sessionId.isEmpty) {
+        throw Exception("User not logged in");
+      }
       final response = await http.get(
         Uri.parse("https://app.zicbot.com/api/get_orders.php"),
         headers: {"Cookie": sessionId, "Accept": "application/json"},

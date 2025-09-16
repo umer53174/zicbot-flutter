@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'login_page.dart'; // import your login page
 import 'core/utils/constants/app_colors.dart';
 import 'core/utils/size_utils.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Enable wakelock to keep the screen on
+  await WakelockPlus.enable();
   runApp(const RestaurantApp());
 }
 
